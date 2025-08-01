@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/IST256-T2SU2025-Storefront.iml" filepath="$PROJECT_DIR$/IST256-T2SU2025-Storefront.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/IST256-T2SU2025-Storefront.iml" filepath="$PROJECT_DIR$/.idea/IST256-T2SU2025-Storefront.iml" />
     </modules>
   </component>
 </project>

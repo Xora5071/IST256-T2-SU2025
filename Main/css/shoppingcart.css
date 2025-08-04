@@ -1,0 +1,27 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+#cart-sidebar {
+  position: fixed;
+  top: 70px;
+  right: -320px;
+  width: 300px;
+  height: calc(100% - 70px);
+  transition: right 0.3s ease-in-out;
+  z-index: 999;
+  overflow-y: auto;
+  border-left: 1px solid #ccc;
+}
+
+#cart-sidebar.open {
+  right: 0;
+}
+
+.card-img-top {
+  height: 150px;
+  object-fit: cover;
+}

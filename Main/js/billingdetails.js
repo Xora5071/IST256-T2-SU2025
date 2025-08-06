@@ -40,7 +40,7 @@ $(document).ready(function(){
     $(document).on("click", ".addToCart", function(){
         const productId = $(this).data("id");
         alert("Added product ID " + productId + " to return cart!");
-        // In a real application, you might integrate this with your AngularJS returnCart.
+        // Might want to integrate this with AngularJS returnCart.
     });
 });
 

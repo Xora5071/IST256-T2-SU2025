@@ -3,8 +3,10 @@ const bodyParser = require(“body-parser”);
 const cors = require(“cors”);
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PRODUCTS_FILE = path.join(__dirname, 'public', 'data', 'ReturnsProducts.json');
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // API endpoint to process returns
 app.post("/api/processReturn", (req, res) => {

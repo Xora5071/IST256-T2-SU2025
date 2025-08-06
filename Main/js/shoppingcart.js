@@ -1,8 +1,7 @@
 $(document).ready(function() {
 
-
-    const jsonUrl = "NEED TO PUT IN ACTUAL URL WHEN WE LINK TO DATABASE, https://api-domain.com/products.json";
-
+    // URL to the API endpoint on the server.
+    const jsonUrl = "/api/products";
     // Global variables for the shopping cart and product data
     let cart = [];
     let products = [];

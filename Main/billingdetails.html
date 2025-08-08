@@ -4,85 +4,102 @@
     <meta charset="utf-8" />
     <title>Billing Details & Handle Returns</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap for styling -->
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/billingdetails.css" />
 </head>
 
 <body>
 
-<h2>Billing Details & Returns</h2>
+<!-- Banner with Background Image -->
+<header class="hero-banner d-flex align-items-center justify-content-center text-white text-center">
+    <h1>Billing Details & Returns</h1>
+</header>
 
-<!-- Main Form Container for Billing and Returns -->
-<form name="billingReturnForm" ng-submit="submitReturn()" novalidate>
+<main class="page-content">
 
-    <!-- Shopper Information Fields -->
-    <label for="shopperId">Shopper ID</label>
-    <input type="text" id="shopperId" ng-model="shopperId" required />
+    <!-- Main Form Container -->
+    <form name="billingReturnForm" ng-submit="submitReturn()" novalidate>
 
-    <label for="reason">Reason for Return</label>
-    <textarea id="reason" ng-model="reason" required></textarea>
+        <!-- Shopper ID -->
+        <label for="shopperId">Shopper ID</label>
+        <input type="text" id="shopperId" name="shopperId" ng-model="shopperId" required />
+        <div ng-show="billingReturnForm.shopperId.$touched && billingReturnForm.shopperId.$invalid">
+            <small class="text-danger">Shopper ID is required.</small>
+        </div>
 
-    <!-- Card Details Section -->
-    <label>Payment Method</label>
-    <div class="card-details">
-        <input type="text" placeholder="Card Number" required />
-        <input type="text" placeholder="MM/YY" required />
-        <input type="text" placeholder="CVC" required />
-    </div>
+        <!-- Reason -->
+        <label for="reason">Reason for Return</label>
+        <textarea id="reason" name="reason" ng-model="reason" required></textarea>
+        <div ng-show="billingReturnForm.reason.$touched && billingReturnForm.reason.$invalid">
+            <small class="text-danger">Reason is required.</small>
+        </div>
 
-    <!-- Return Cart Display -->
-    <h4>Items to Return:</h4>
-    <ul ng-if="returnCart.length > 0">
-        <li ng-repeat="item in returnCart">{{ item.productName }} - ${{ item.originalPrice | number:2 }}</li>
-    </ul>
-    <p ng-if="returnCart.length === 0">No items added to return cart yet.</p>
+        <!-- Card Details -->
+        <label for="cardNumber">Payment Method</label>
+        <div class="card-details">
+            <div>
+                <input type="text" id="cardNumber" name="cardNumber" placeholder="Card Number" required />
+            </div>
+            <div>
+                <input type="text" id="expiry" name="expiry" placeholder="MM/YY" required />
+            </div>
+            <div>
+                <input type="text" id="cvc" name="cvc" placeholder="CVC" required />
+            </div>
+        </div>
 
-    <!-- Return Type Selection -->
-    <div class="return-section">
-        <label for="returnType">Return Type</label>
-        <select id="returnType" ng-model="returnType" required>
-            <option value="">Select Type</option>
-            <option value="refund">Refund</option>
-            <option value="exchange">Exchange</option>
-        </select>
-    </div>
+        <!-- Return Cart -->
+        <h4 class="mt-4">Items to Return:</h4>
+        <ul ng-if="returnCart.length > 0">
+            <li ng-repeat="item in returnCart">{{ item.productName }} - ${{ item.originalPrice | number:2 }}</li>
+        </ul>
+        <p ng-if="returnCart.length === 0">No items added to return cart yet.</p>
 
-    <!-- Submit Button for the Return Form -->
-    <button type="submit">Process Return</button>
+        <!-- Return Type -->
+        <div class="return-section">
+            <label for="returnType">Return Type</label>
+            <select id="returnType" name="returnType" ng-model="returnType" required>
+                <option value="">Select Type</option>
+                <option value="refund">Refund</option>
+                <option value="exchange">Exchange</option>
+            </select>
+            <div ng-show="billingReturnForm.returnType.$touched && billingReturnForm.returnType.$invalid">
+                <small class="text-danger">Please select a return type.</small>
+            </div>
+        </div>
 
-    <!-- Success Message -->
-    <div id="successMessage" class="success-message" style="display: none;">
+        <!-- Submit Button -->
+        <button type="submit">Process Return</button>
 
-    </div>
+        <!-- Success Messages -->
+        <div id="successMessage" class="success-message d-none" aria-live="polite"></div>
+        <div ng-if="refundDetails.status" class="success-message">
+            Return Processed! Confirmation ID: {{ refundDetails.confirmationID }}
+        </div>
+    </form>
 
-    <!-- Refund Details Display -->
-    <div ng-if="refundDetails.status" class="success-message">
-        Return Processed! Confirmation ID: {{ refundDetails.confirmationID }}
-    </div>
+    <hr class="my-5">
 
-</form>
+    <!-- Product Search Section -->
+    <section class="product-search-section">
+        <h3>Search Products for Return:</h3>
+        <div class="search-wrapper mx-auto">
+            <input type="text" id="searchBox" placeholder="Search by product name or ID" class="form-control mb-3" />
+        </div>
+        <div id="productResults"></div>
+    </section>
 
-<hr class="my-5">
+</main>
 
-<!-- Product Search and Add to Return Cart Section -->
-<div class="product-search-section">
-    <h3>Search Products for Return</h3>
-    <input type="text" id="searchBox" placeholder="Search by product name or ID" class="form-control mb-3" />
-    <div id="productResults">
-    </div>
-</div>
-
-<!-- AngularJS CDN for storefrontApp module and controllers -->
+<!-- Scripts -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-<!-- jQuery CDN for product search and DOM manipulation) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- Bootstrap JS bundle for interactive components) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<!-- AngularJS logic for billing/returns and AJAX transport -->
 <script src="js/billingdetails.js"></script>
-<!-- jQuery logic for searching the product document collection -->
 <script src="js/nodejsserver.js"></script>
 
 </body>

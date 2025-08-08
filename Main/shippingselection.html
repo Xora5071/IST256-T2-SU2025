@@ -4,101 +4,72 @@
     <meta charset="utf-8">
     <title>Shipping Selection</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS for professional look -->
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <!-- Link to CSS for styling -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/shippingselection.css">
 </head>
 
 <body>
 
-<!-- Page Title -->
-<h2>Shipping Information</h2>
+<!-- Hero Banner -->
+<header class="hero-banner d-flex align-items-center justify-content-center text-white text-center">
+    <h1>Shipping Information</h1>
+</header>
 
-<!-- Shipping Form Container -->
-<form name="shippingForm" ng-submit="submitShipping()" novalidate>
+<!-- Main Content -->
+<main>
+    <form name="shippingForm" ng-submit="submitShipping()" novalidate>
 
-    <!-- Destination Address Fields -->
-    <label>Street Address 1</label>
-    <input type="text" ng-model="shippingDetails.street1" required />
-    <!-- Required: Main delivery address -->
+        <label for="street1">Street Address 1</label>
+        <input id="street1" type="text" ng-model="shippingDetails.street1" required />
 
-    <label>Street Address 2</label>
-    <input type="text" ng-model="shippingDetails.street2" />
-    <!-- Optional: Apartment, suite, etc. -->
+        <label for="street2">Street Address 2</label>
+        <input id="street2" type="text" ng-model="shippingDetails.street2" />
 
-    <label>City</label>
-    <input type="text" ng-model="shippingDetails.city" required />
-    <!-- Required: City name -->
+        <label for="city">City</label>
+        <input id="city" type="text" ng-model="shippingDetails.city" required />
 
-    <label>State</label>
-    <input type="text" ng-model="shippingDetails.state" required />
-    <!-- Required: State abbreviation (e.g. PA, NY) -->
+        <label for="state">State</label>
+        <input id="state" type="text" ng-model="shippingDetails.state" required maxlength="2" pattern="[A-Za-z]{2}" title="Enter a 2-letter state abbreviation" />
 
-    <label>ZIP Code</label>
-    <input type="text" ng-model="shippingDetails.zip" required />
-    <!-- Required: Postal code -->
+        <label for="zip">ZIP Code</label>
+        <input id="zip" type="text" ng-model="shippingDetails.zip" required pattern="\\d{5}(-\\d{4})?" title="Enter a valid ZIP code" />
 
-    <!-- Shipping Carrier Selection -->
-    <label>Shipping Carrier</label>
-    <div class="shipping-option">
-        <label>
-            <input type="radio" name="carrier" ng-model="shippingDetails.carrier" value="UPS" required />
-            UPS
-        </label>
-    </div>
-    <div class="shipping-option">
-        <label>
-            <input type="radio" name="carrier" ng-model="shippingDetails.carrier" value="FedEx" />
-            FedEx
-        </label>
-    </div>
-    <div class="shipping-option">
-        <label>
-            <input type="radio" name="carrier" ng-model="shippingDetails.carrier" value="USPS" />
-            USPS
-        </label>
-    </div>
-    <!-- Only one carrier can be selected (radio group) -->
+        <!-- Shipping Carrier -->
+        <label>Shipping Carrier</label>
+        <div class="shipping-option">
+            <label><input type="radio" name="carrier" ng-model="shippingDetails.carrier" value="UPS" required> UPS</label>
+        </div>
+        <div class="shipping-option">
+            <label><input type="radio" name="carrier" ng-model="shippingDetails.carrier" value="FedEx"> FedEx</label>
+        </div>
+        <div class="shipping-option">
+            <label><input type="radio" name="carrier" ng-model="shippingDetails.carrier" value="USPS"> USPS</label>
+        </div>
 
-    <!-- Shipping Method Selection with Dynamic Pricing -->
-    <label>Shipping Method</label>
-    <div class="shipping-option">
-        <label>
-            <input type="radio" name="method" ng-model="shippingDetails.method" value="Standard" required />
-            Standard ($5)
-        </label>
-    </div>
-    <div class="shipping-option">
-        <label>
-            <input type="radio" name="method" ng-model="shippingDetails.method" value="Expedited" />
-            Expedited ($10)
-        </label>
-    </div>
-    <div class="shipping-option">
-        <label>
-            <input type="radio" name="method" ng-model="shippingDetails.method" value="Overnight" />
-            Overnight ($20)
-        </label>
-    </div>
-    <!-- One method selected — pricing used for cart total -->
+        <!-- Shipping Method -->
+        <label>Shipping Method</label>
+        <div class="shipping-option">
+            <label><input type="radio" name="method" ng-model="shippingDetails.method" value="Standard" required> Standard ($5)</label>
+        </div>
+        <div class="shipping-option">
+            <label><input type="radio" name="method" ng-model="shippingDetails.method" value="Expedited"> Expedited ($10)</label>
+        </div>
+        <div class="shipping-option">
+            <label><input type="radio" name="method" ng-model="shippingDetails.method" value="Overnight"> Overnight ($20)</label>
+        </div>
 
-    <!-- Submit Button -->
-    <button type="submit">Confirm Shipping</button>
-    <!-- Triggers AngularJS function to validate and send data via RESTful service -->
+        <button type="submit">Confirm Shipping</button>
+    </form>
+</main>
 
-</form>
-
-<!-- AngularJS CDN call restful API services to handle and send JSON documents-->
+<!-- Scripts -->
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-<!-- AngularJS application logic -->
 <script src="js/shippingselection.js"></script>
-<!-- jQuery CDN for Product Document collection to add to shopping cart-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap JS bundle for interactive components -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
-
-

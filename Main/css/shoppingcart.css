@@ -1,27 +1,83 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f8f9fa;
+  background-image: url('https://images.stockcake.com/public/c/e/8/ce853954-6e44-4e7a-ad81-8a267525e193_large/glowing-circuit-matrix-stockcake.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
   margin: 0;
   padding: 0;
+  color: #fff;
+}
+
+.hero-banner {
+  background-image: url('https://cdn.pixabay.com/photo/2016/11/01/17/15/gameboy-1788971_1280.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-banner h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0;
 }
 
 #cart-sidebar {
   position: fixed;
-  top: 70px;
+  top: 0;
   right: -320px;
   width: 300px;
-  height: calc(100% - 70px);
+  height: 100%;
+  background-color: #fff;
+  color: #212529;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
   transition: right 0.3s ease-in-out;
-  z-index: 999;
+  z-index: 1050;
   overflow-y: auto;
   border-left: 1px solid #ccc;
+  padding: 20px;
 }
 
 #cart-sidebar.open {
   right: 0;
 }
 
+#cart-sidebar h5 {
+  margin-bottom: 20px;
+}
+
+#cart-total {
+  font-weight: bold;
+}
+
+.cart-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1100;
+}
+
 .card-img-top {
   height: 150px;
   object-fit: cover;
+}
+
+button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .hero-banner h1 {
+    font-size: 26px;
+  }
+
+  #cart-sidebar {
+    width: 100%;
+  }
 }

@@ -1,84 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Storefront Product Management</title>
     <meta charset="utf-8">
+    <title>Gameboy Inventory Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS for professional look -->
+
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <!--Link to Daniel’s CSS for styling -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/productmanagement.css">
 </head>
 
 <body>
 
-<form id="productForm">
-    <h2>Enter New Product Details</h2>
+<!-- Header Banner -->
+<header class="hero-banner d-flex align-items-center justify-content-center text-white text-center">
+    <h1>Gameboy Inventory Management</h1>
+</header>
+
+<!-- Product Form -->
+<form id="productForm" enctype="multipart/form-data">
+    <h2>Add a Gameboy to Inventory</h2>
 
     <div id="successMessage" class="success-message">
-        Product successfully added!
+        Gameboy added successfully!
     </div>
 
     <div class="required">
         <label for="productId">Product ID:</label>
-        <input type="text" id="productId" name="productId" required value="">
+        <input type="text" id="productId" name="productId" required>
     </div>
 
     <div class="required">
-        <label for="productDescription">Product Description:</label>
+        <label for="productDescription">Description:</label>
         <textarea id="productDescription" name="productDescription" required></textarea>
     </div>
 
     <div class="required">
-        <label for="productCategory">Product Category:</label>
+        <label for="productCategory">Gameboy Model:</label>
         <select id="productCategory" name="productCategory" required>
-            <option value="" selected disabled>Select a Category</option>
-            <option value="category1">Category 1</option>
-            <option value="category2">Category 2</option>
-            <option value="category3">Category 3</option>
-            <option value="category4">Category 4</option>
-            <option value="category5">Category 5</option>
+            <option value="" disabled selected>Select Model</option>
+            <option value="original">Game Boy (1989)</option>
+            <option value="pocket">Game Boy Pocket</option>
+            <option value="light">Game Boy Light</option>
+            <option value="color">Game Boy Color</option>
+            <option value="advance">Game Boy Advance</option>
+            <option value="advance-sp">Game Boy Advance SP</option>
+            <option value="micro">Game Boy Micro</option>
         </select>
     </div>
 
     <div class="required">
-        <label for="productUOM">Product Unit of Measure:</label>
-        <select id="productUOM" name="productUOM" required>
-            <option value="" selected disabled>Select Unit of Measure</option>
-            <option value="pcs">Pieces (pcs)</option>
-            <option value="pr">Pair (pr)</option>
-            <option value="set">Set (set)</option>
-            <option value="box">Box (box)</option>
-            <option value="pack">Pack (pack)</option>
-            <option value="dz">Dozen (dz)</option>
+        <label for="productColor">Color:</label>
+        <select id="productColor" name="productColor" required>
+            <option value="" disabled selected>Select Color</option>
+            <option value="red">Red</option>
+            <option value="black">Black</option>
+            <option value="green">Green</option>
+            <option value="purple">Purple</option>
+            <option value="yellow">Yellow</option>
+            <option value="blue">Blue</option>
+            <option value="white">White</option>
+            <option value="monochrome">Monochrome</option>
         </select>
     </div>
 
     <div class="required">
-        <label for="productPrice">Product Price:</label>
-        <input type="number" id="productPrice" name="productPrice" step="0.01" min="0" required value="">
+        <label for="productCondition">Condition:</label>
+        <select id="productCondition" name="productCondition" required>
+            <option value="" disabled selected>Select Condition</option>
+            <option value="near-mint">Near Mint</option>
+            <option value="lightly-used">Lightly Used</option>
+            <option value="moderately-used">Moderately Used</option>
+        </select>
     </div>
 
-    <div>
-        <label>Product Weight (optional):</label>
-        <div class="weight-input-group"> <input type="number" id="productWeightValue" name="productWeightValue" step="0.01" min="0" value="">
-            <select id="productWeightUnit" name="productWeightUnit">
-                <option value="" selected disabled>Select Unit</option>
-                <option value="kg">Kilograms (kg)</option>
-                <option value="g">Grams (g)</option>
-                <option value="lbs">Pounds (lbs)</option>
-                <option value="oz">Ounces (oz)</option>
-                <option value="L">Liters (L)</option>
-                <option value="mL">Milliliters (mL)</option>
-            </select>
-        </div>
+    <div class="required">
+        <label for="productPrice">Price (USD):</label>
+        <input type="number" id="productPrice" name="productPrice" step="0.01" min="0" required>
     </div>
 
-    <input type="submit" value="Add Product">
+    <div class="required">
+        <label for="productImage">Upload Gameboy Image:</label>
+        <input type="file" id="productImage" name="productImage" accept="image/*" required>
+    </div>
+
+    <input type="submit" value="Add Gameboy">
 </form>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        crossorigin="anonymous"> </script>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="js/productmanagement.js"></script>
 
 </body>
+</html>

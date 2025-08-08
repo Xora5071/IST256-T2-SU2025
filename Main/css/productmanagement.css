@@ -1,14 +1,23 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f2f5;
-  padding: 40px;
   margin: 0;
+  padding: 0;
 }
 
-h2 {
-  color: #222;
-  margin-bottom: 25px;
-  text-align: center;
+.hero-banner {
+  background-image: url('https://cdn.pixabay.com/photo/2016/04/03/18/08/nostalgia-1305079_1280.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 280px;
+  padding: 20px;
+  color: white;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-banner h1 {
+  font-size: 36px;
+  font-weight: bold;
 }
 
 form {
@@ -16,8 +25,14 @@ form {
   padding: 30px;
   border-radius: 10px;
   max-width: 600px;
-  margin: 0 auto 40px auto;
+  margin: 40px auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #222;
+  margin-bottom: 25px;
+  text-align: center;
 }
 
 label {
@@ -28,11 +43,10 @@ label {
 }
 
 input[type="text"],
-input[type="email"],
-input[type="tel"],
 input[type="number"],
 textarea,
-select {
+select,
+input[type="file"] {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -43,15 +57,12 @@ select {
   transition: border-color 0.3s ease;
 }
 
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="tel"]:focus,
-input[type="number"]:focus,
+input:focus,
 textarea:focus,
 select:focus {
   border-color: #007bff;
-  outline: none;
   background-color: #fff;
+  outline: none;
 }
 
 textarea {
@@ -86,18 +97,15 @@ input[type="submit"]:hover {
   border-radius: 6px;
   margin-bottom: 20px;
   text-align: center;
+  display: none;
 }
 
-.weight-input-group {
-  display: flex;
-  gap: 12px;
-}
+@media (max-width: 600px) {
+  .hero-banner h1 {
+    font-size: 26px;
+  }
 
-.weight-input-group input[type="number"],
-.weight-input-group select {
-  flex: 1;
-}
-
-#successMessage {
-    display: none;
+  form {
+    padding: 25px 20px;
+  }
 }

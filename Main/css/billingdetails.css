@@ -1,26 +1,44 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #e9ecef;
+  background-image: url('https://images.stockcake.com/public/c/e/8/ce853954-6e44-4e7a-ad81-8a267525e193_large/glowing-circuit-matrix-stockcake.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center;
   margin: 0;
+  color: #fff;
+}
+
+.page-content {
   padding: 40px 20px;
 }
 
-h2 {
-  color: #212529;
-  margin-bottom: 30px;
-  text-align: center;
-  font-size: 28px;
-  font-weight: 600;
+.hero-banner {
+  background-image: url('https://cdn.pixabay.com/photo/2016/11/01/17/15/gameboy-1788971_1280.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  padding: 20px;
+  color: white;
+  position: relative;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-banner h1 {
+  font-size: 36px;
+  font-weight: 700;
 }
 
 form {
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white */
   padding: 35px;
   border-radius: 12px;
   max-width: 650px;
   margin: 0 auto 50px auto;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  color: #212529; /* Dark text */
 }
+
 
 label {
   font-weight: 600;
@@ -31,9 +49,6 @@ label {
 }
 
 input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="number"],
 textarea,
 select {
   width: 100%;
@@ -63,10 +78,11 @@ textarea {
   display: flex;
   gap: 15px;
   flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
 .card-details input {
-  flex: 1 1 48%;
+  flex: 1 1 30%;
 }
 
 .return-section {
@@ -102,20 +118,29 @@ input[type="submit"]:hover {
   padding: 12px 18px;
   border-radius: 6px;
   font-size: 15px;
-  margin-bottom: 20px;
+  margin-top: 20px;
   text-align: center;
 }
 
+.d-none {
+display: none !important;
+}
+
+.search-wrapper {
+ max-width: 400px;
+ margin: 0 auto;
+}
+
 @media (max-width: 600px) {
+  .hero-banner h1 {
+    font-size: 26px;
+  }
+
   form {
     padding: 25px 20px;
   }
 
   .card-details input {
     flex: 1 1 100%;
-  }
-
-  h2 {
-    font-size: 24px;
   }
 }

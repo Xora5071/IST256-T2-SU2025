@@ -4,36 +4,42 @@
     <meta charset="UTF-8" />
     <title>Shopping Cart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Bootstrap CSS-->
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!--Link to Daniel's CSS for styling-->
+
+    <!-- Custom CSS -->
     <link href="css/shoppingcart.css" rel="stylesheet">
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-        <span class="navbar-brand h1">My Shopping Cart</span>
-        <button class="btn btn-outline-light" id="cart-toggle">
-            Cart (<span id="cart-count">0</span>)
-        </button>
-    </div>
-</nav>
+<!-- Hero Banner -->
+<header class="hero-banner d-flex align-items-center justify-content-center text-white text-center">
+    <h1>My Shopping Cart</h1>
+</header>
 
-<div class="container mt-4">
+<!-- Product List -->
+<div class="container mt-5">
     <div class="row" id="product-list">
+        <!-- Products dynamically added here -->
     </div>
 </div>
 
+<!-- Cart Sidebar -->
 <div id="cart-sidebar" class="bg-light p-3 shadow">
     <h5>Your Cart</h5>
     <ul id="cart-items" class="list-group mb-3"></ul>
     <p>Total: $<span id="cart-total">0.00</span></p>
-    <button class="btn btn-primary" id="checkout">Checkout</button>
+    <button class="btn btn-primary w-100" id="checkout">Checkout</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        crossorigin="anonymous"></script>
+<!-- Cart Toggle Button (floating) -->
+<button class="btn btn-primary cart-toggle" id="cart-toggle">
+    Cart (<span id="cart-count">0</span>)
+</button>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="js/shoppingcart.js"></script>
 

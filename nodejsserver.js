@@ -21,7 +21,7 @@ MongoClient.connect(mongoURL, { useUnifiedTopology: true })
     db = client.db("Db");
     console.log("Connected to MongoDB");
 
-    // Insert sample document
+    // Insert sample document (optional)
     const customersCollection = db.collection("pract");
     const customer = { _id: 1, name: "John Doe", address: "123, City, State", orderdata: "Gameboy" };
     customersCollection.insertOne(customer).then(() => {
@@ -30,14 +30,65 @@ MongoClient.connect(mongoURL, { useUnifiedTopology: true })
   })
   .catch(err => console.error("MongoDB connection error:", err));
 
-// Example API route
+/* ---------------------------
+   API ROUTES
+----------------------------*/
+
+// Example existing route
 app.get('/api/customers', async (req, res) => {
   const customers = await db.collection("pract").find().toArray();
   res.json(customers);
 });
 
-// Start server
+// Shopper info
+app.post('/api/shopper', async (req, res) => {
+  const result = await db.collection("shoppers").insertOne(req.body);
+  res.json({ success: true, id: result.insertedId });
+});
+
+// Product list
+app.get('/api/products', async (req, res) => {
+  const products = await db.collection("products").find().toArray();
+  res.json(products);
+});
+
+// Shopping cart
+app.post('/api/cart', async (req, res) => {
+  const result = await db.collection("carts").updateOne(
+    { shopperId: req.body.shopperId },
+    { $set: { items: req.body.items } },
+    { upsert: true }
+  );
+  res.json({ success: true });
+});
+
+app.get('/api/cart', async (req, res) => {
+  const cart = await db.collection("carts").findOne({ shopperId: req.query.shopperId });
+  res.json(cart || { items: [] });
+});
+
+// Shipping selection
+app.post('/api/shipping', async (req, res) => {
+  // Simple static rate calc for demo
+  const shippingCost = req.body.method === "express" ? 15 : 5;
+  res.json({ shippingCost, eta: "3-5 days" });
+});
+
+// Billing
+app.post('/api/billing', async (req, res) => {
+  const result = await db.collection("orders").insertOne(req.body);
+  res.json({ success: true, orderId: result.insertedId });
+});
+
+// Returns
+app.post('/api/returns', async (req, res) => {
+  const result = await db.collection("returns").insertOne(req.body);
+  res.json({ success: true, returnId: result.insertedId });
+});
+
+/* ---------------------------
+   START SERVER
+----------------------------*/
 app.listen(PORT, () => {
   console.log(`Express server running at http://localhost:${PORT}`);
 });
-

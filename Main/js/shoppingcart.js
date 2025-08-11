@@ -104,16 +104,45 @@ $(document).ready(function() {
         cartSidebar.toggleClass("open");
 });
 
-    // Handle checkout button click
-    checkoutButton.on("click", function() {
-        if (cart.length > 0) {
-         alert(`Checking out with a total of $${cartTotalSpan.text()}`);
+// Handle checkout button click
+checkoutButton.on("click", function() {
+    if (cart.length > 0) {
+        // Build the checkout payload
+        const shippingData = JSON.parse(localStorage.getItem('shippingDetails') || '{}');
+        const shopperData  = JSON.parse(localStorage.getItem('shopperDetails') || '{}');
+
+        const checkoutDoc = {
+            shopper: shopperData,
+            cart: cart,
+            shipping: shippingData,
+            total: parseFloat(cartTotalSpan.text())
+        };
+
+        // Send to REST API via AJAX
+        $.ajax({
+            url: '/api/checkout',                // replace with your actual checkout endpoint
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(checkoutDoc)
+        })
+        .done(function(response) {
+            alert('Order placed successfully!');
+            console.log('Server response:', response);
+
+            // Optionally clear cart & localStorage
             cart = [];
             updateCartDisplay();
+            localStorage.removeItem('shippingDetails');
+            localStorage.removeItem('shopperDetails');
             cartSidebar.removeClass("open");
-        } else {
-            alert("Your cart is empty!");
-        }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            console.error('Checkout error:', textStatus, errorThrown);
+            alert('There was an error placing your order.');
+        });
+    } else {
+        alert("Your cart is empty!");
+    }
 });
 
     updateCartDisplay();

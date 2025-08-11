@@ -14,27 +14,27 @@
 <body>
 
 <!-- Hero Banner -->
-<header class="hero-banner d-flex align-items-center justify-content-center text-white text-center">
-    <h1>My Shopping Cart</h1>
+<header class="hero-banner bg-primary text-white text-center py-5">
+    <h1 class="display-4">My Shopping Cart</h1>
 </header>
 
-<!-- Product List -->
-<div class="container mt-5">
-    <div class="row" id="product-list">
+<!-- Main Content -->
+<main class="container mt-5">
+    <div class="row" id="product-list" role="list">
         <!-- Products dynamically added here -->
     </div>
-</div>
+</main>
 
 <!-- Cart Sidebar -->
-<div id="cart-sidebar" class="bg-light p-3 shadow">
+<aside id="cart-sidebar" class="position-fixed top-0 end-0 bg-light p-4 shadow-lg" style="width: 300px; height: 100vh; overflow-y: auto; display: none;">
     <h5>Your Cart</h5>
-    <ul id="cart-items" class="list-group mb-3"></ul>
-    <p>Total: $<span id="cart-total">0.00</span></p>
-    <button class="btn btn-primary w-100" id="checkout">Checkout</button>
-</div>
+    <ul id="cart-items" class="list-group mb-3" aria-label="Cart Items"></ul>
+    <p class="fw-bold">Total: $<span id="cart-total">0.00</span></p>
+    <button class="btn btn-success w-100" id="checkout">Checkout</button>
+</aside>
 
-<!-- Cart Toggle Button (floating) -->
-<button class="btn btn-primary cart-toggle" id="cart-toggle">
+<!-- Cart Toggle Button -->
+<button class="btn btn-primary position-fixed bottom-3 end-3 cart-toggle" id="cart-toggle" aria-label="Toggle Cart">
     Cart (<span id="cart-count">0</span>)
 </button>
 
@@ -45,3 +45,4 @@
 
 </body>
 </html>
+

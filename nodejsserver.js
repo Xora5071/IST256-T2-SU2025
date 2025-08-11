@@ -6,7 +6,7 @@ const cors = require('cors');
 const path = require('path');
 const { ObjectId } = require('mongodb');
 
-const { connectDB, getDb, closeDB } = require('./Main/js/db');
+const { connectDB, getDb, getClient } = require('./Main/js/db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -178,6 +178,53 @@ async function initDB() {
     }
   });
 
+   await ensureCollection('refunds', {
+      validator: {
+        $jsonSchema: {
+          bsonType: 'object',
+          required: ['returnId', 'refundAmount', 'refundStatus', 'createdAt'],
+          properties: {
+            returnId: { bsonType: 'objectId' },
+            refundAmount: { bsonType: ['double', 'int', 'decimal'], minimum: 0 },
+            refundDate: { bsonType: ['date', 'string', 'null'] },
+            refundStatus: { enum: ['pending', 'approved', 'rejected', 'refunded'] },
+            reasonForRefund: { bsonType: 'string' },
+            refundItems: {
+              bsonType: 'array',
+              items: {
+                bsonType: 'object',
+                required: ['productId', 'quantityRefunded', 'refundAmountPerItem'],
+                properties: {
+                  productId: { bsonType: 'string' },
+                  quantityRefunded: { bsonType: 'int', minimum: 0 },
+                  refundAmountPerItem: { bsonType: ['double', 'int', 'decimal'], minimum: 0 }
+                }
+              }
+            },
+            refundLocation: {
+              bsonType: 'object',
+              required: ['type'],
+              properties: {
+                type: { bsonType: 'string' },
+                creditCardLastFour: { bsonType: ['string', 'null'] },
+                paypalTransactionId: { bsonType: ['string', 'null'] },
+                bankAccountNumberLastFour: { bsonType: ['string', 'null'] },
+                bankRoutingNumber: { bsonType: ['string', 'null'] },
+                storeCreditId: { bsonType: ['string', 'null'] },
+                giftCardCode: { bsonType: ['string', 'null'] },
+                mobileWalletTransactionId: { bsonType: ['string', 'null'] },
+                cryptoTransactionHash: { bsonType: ['string', 'null'] },
+                checkNumber: { bsonType: ['string', 'null'] },
+                loyaltyAccountId: { bsonType: ['string', 'null'] }
+              }
+            },
+            createdAt: { bsonType: 'date' }
+          },
+          additionalProperties: true
+        }
+      }
+    });
+
   // Helpful indexes
   await db.collection('shopper').createIndex({ email: 1 }, { unique: true, name: 'uniq_email' });
   await db.collection('products').createIndex({ productId: 1 }, { unique: true, name: 'uniq_productId' });
@@ -191,6 +238,7 @@ async function initDB() {
   await db.collection('billing').createIndex({ status: 1 }, { name: 'idx_billing_status' });
   await db.collection('returns').createIndex({ shopperId: 1, processed_at: -1 }, { name: 'idx_returns_shopper_processed' });
   await db.collection('returns').createIndex({ status: 1 }, { name: 'idx_returns_status' });
+  await db.collection('refunds').createIndex({ returnId: 1 }, { name: 'idx_refunds_returnid' });
 
   console.log(' Collections + indexes ready.');
 }
@@ -465,6 +513,61 @@ app.post('/api/processReturn', async (req, res) => {
   }
 });
 
+app.post('/api/processDetailedReturn', async (req, res) => {
+  const db = getDb();
+  const client = getClient();
+
+  const session = client.startSession();
+  try {
+    session.startTransaction();
+
+    const {
+      productId,
+      originalOrderId,
+      quantityToReturn,
+      reasonForReturn,
+      refundAmount,
+      refundDate,
+      refundStatus,
+      refundItems,
+      refundLocation
+    } = req.body;
+
+    const shopperId = 'some-shopper-id-from-session';
+
+    const returnDoc = {
+      shopperId,
+      orderId: originalOrderId,
+      productId: productId,
+      reason: reasonForReturn,
+      status: 'pending',
+      processed_at: new Date()
+    };
+    const returnResult = await db.collection('returns').insertOne(returnDoc, { session });
+
+    const refundDoc = {
+      ...req.body,
+      returnId: returnResult.insertedId,
+      createdAt: new Date()
+    };
+    await db.collection('refunds').insertOne(refundDoc, { session });
+
+    await session.commitTransaction();
+
+    res.status(201).json({
+      message: 'Detailed return and refund processed successfully.',
+      returnId: returnResult.insertedId,
+      confirmationID: 'RefundID' + Math.floor(Math.random() * 100000)
+    });
+
+  } catch (error) {
+    await session.abortTransaction();
+    console.error('Error processing detailed return:', error);
+    res.status(500).json({ message: 'Failed to process detailed return.' });
+  } finally {
+    session.endSession();
+  }
+});
 /* -------------------------------------------------
    Bootstrap
 -------------------------------------------------- */

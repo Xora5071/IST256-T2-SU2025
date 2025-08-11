@@ -30,4 +30,8 @@ function getDb() {
   return db;
 }
 
-module.exports = { connectDB, getDb };
+function getClient() {
+  if (!client) throw new Error('Client not initialized. Call connectDB() first.');
+  return client;
+}
+module.exports = { connectDB, getDb, getClient };

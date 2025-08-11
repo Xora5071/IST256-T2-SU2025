@@ -1,7 +1,7 @@
 $(document).ready(function() {
 
     // URL to the API endpoint on the server.
-    const jsonUrl = "/Main/products.json";
+    const jsonUrl = "/api/products";
     // Global variables for the shopping cart and product data
     let cart = [];
     let products = [];

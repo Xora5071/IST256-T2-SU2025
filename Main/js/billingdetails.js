@@ -12,6 +12,8 @@ app.controller('BillingReturnController', ['$scope', '$http', function($scope, $
     returnType: ''
   };
   $scope.refundDetails = {};
+  $scope.returnCart = [];
+
 
   // Simple card checks (for demo only)
   function luhnCheck(num) {
@@ -65,8 +67,16 @@ app.controller('BillingReturnController', ['$scope', '$http', function($scope, $
       reason: $scope.form.reason,
       refundMethod: $scope.form.refundMethod,
       returnType: $scope.form.returnType,
+      items: $scope.returnCart.map(item => ({
+        id: item.id,
+        productName: item.productName,
+        originalPrice: item.originalPrice,
+        quantity: item.quantity || 1
+      })),
       billing: {
-        last4: $scope.form.cardNumber ? $scope.form.cardNumber.replace(/\D/g, '').slice(-4) : null,
+        last4: $scope.form.cardNumber
+          ? $scope.form.cardNumber.replace(/\D/g, '').slice(-4)
+          : null,
         expiry: $scope.form.expiry || null
       },
       submittedAt: new Date().toISOString()
@@ -90,3 +100,47 @@ app.controller('BillingReturnController', ['$scope', '$http', function($scope, $
       });
   };
 }]);
+(function() {
+  var timer = null;
+
+  function renderResults(products) {
+    var $results = $('#productResults').empty();
+    if (!products.length) {
+      $results.html('<p class="text-muted">No products found.</p>');
+      return;
+    }
+    products.forEach(function(p) {
+      var card = `
+        <div class="card p-2 mb-2">
+          <h5>${p.name}</h5>
+          <p>$${(p.price || 0).toFixed(2)}</p>
+          <button class="btn btn-sm btn-outline-primary add-return"
+                  data-id="${p.id}"
+                  data-name="${p.name}"
+                  data-price="${p.price || 0}">Add to Return</button>
+        </div>`;
+      $results.append(card);
+    });
+  }
+
+  $('#searchBox').on('input', function() {
+    var q = $(this).val().trim();
+    clearTimeout(timer);
+    timer = setTimeout(function() {
+      if (!q) return $('#productResults').empty();
+      $.getJSON('/api/products', { query: q })
+        .done(renderResults)
+        .fail(() => $('#productResults').html('<p class="text-danger">Error searching.</p>'));
+    }, 250);
+  });
+
+  $('#productResults').on('click', '.add-return', function() {
+    var prod = {
+      id: $(this).data('id'),
+      name: $(this).data('name'),
+      price: $(this).data('price')
+    };
+    var scope = angular.element(document.body).scope();
+    scope.$apply(() => scope.addItemToReturn(prod));
+  });
+})();

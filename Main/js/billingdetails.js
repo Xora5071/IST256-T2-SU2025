@@ -1,74 +1,92 @@
-$(document).ready(function(){
-    let returnProducts = [];
+var app = angular.module('storefrontApp', []);
 
-    // Fetches product data from a JSON file.
-    $.getJSON("Main/ReturnsProducts.json", function(data) {
-        returnProducts = data;
-        displayProducts(returnProducts);
-    }).fail(function(jqxhr, textStatus, error) {
-        console.error("Error loading ReturnsProducts.json: " + textStatus + ", " + error);
-    });
+app.controller('BillingReturnController', ['$scope', '$http', function($scope, $http) {
+  $scope.ui = { loading: false, error: '' };
+  $scope.form = {
+    shopperId: '',
+    reason: '',
+    refundMethod: '',
+    cardNumber: '',
+    expiry: '',
+    cvc: '',
+    returnType: ''
+  };
+  $scope.refundDetails = {};
 
-    // Handles real-time search as the user types.
-    $("#searchBox").on("input", function(){
-        const query = $(this).val().toLowerCase();
-        const filtered = returnProducts.filter(p =>
-            p.productName.toLowerCase().includes(query) ||
-            p.productId.toLowerCase().includes(query)
-        );
-        displayProducts(filtered);
-    });
+  // Simple card checks (for demo only)
+  function luhnCheck(num) {
+    const s = (num || '').replace(/\D/g, '');
+    let sum = 0, dbl = false;
+    for (let i = s.length - 1; i >= 0; i--) {
+      let d = parseInt(s[i], 10);
+      if (dbl) { d *= 2; if (d > 9) d -= 9; }
+      sum += d; dbl = !dbl;
+    }
+    return s.length >= 12 && sum % 10 === 0;
+  }
 
-    // Displays products in the results div.
-    function displayProducts(products) {
-        $("#productResults").empty();
-        if (products.length === 0) {
-            $("#productResults").append('<p class="text-gray-500 text-center py-4">No products found.</p>');
-            return;
-        }
-        products.forEach(p => {
-            $("#productResults").append(
-                `<div class="product-item">
-                    <span>${p.productName} ($${p.originalPrice.toFixed(2)})</span>
-                    <button class="btn btn-primary addToCart" data-id="${p.productId}">Add to Return Cart</button>
-                </div>`
-            );
-        });
+  function parseExpiry(mmYY) {
+    const m = (mmYY || '').match(/^(\d{2})\/(\d{2})$/);
+    if (!m) return null;
+    const mm = parseInt(m[1], 10), yy = parseInt(m[2], 10);
+    const year = 2000 + yy, monthIdx = mm - 1;
+    const now = new Date();
+    const exp = new Date(year, monthIdx + 1, 0);
+    return { valid: exp >= now };
+  }
+
+  $scope.submitReturn = function() {
+    $scope.ui.error = '';
+
+    // Basic validation
+    if (!$scope.form.shopperId || !$scope.form.reason || !$scope.form.refundMethod || !$scope.form.returnType) {
+      $scope.ui.error = 'Please fill all required fields.';
+      return;
+    }
+    if ($scope.form.refundMethod === 'original_card') {
+      if (!luhnCheck($scope.form.cardNumber)) {
+        $scope.ui.error = 'Invalid card number.';
+        return;
+      }
+      const exp = parseExpiry($scope.form.expiry);
+      if (!exp || !exp.valid) {
+        $scope.ui.error = 'Card expiry invalid or expired.';
+        return;
+      }
+      if (!/^\d{3,4}$/.test($scope.form.cvc)) {
+        $scope.ui.error = 'Invalid CVC.';
+        return;
+      }
     }
 
-    // Handles click event for "Add to Return Cart" buttons.
-    $(document).on("click", ".addToCart", function(){
-        const productId = $(this).data("id");
-        alert("Added product ID " + productId + " to return cart!");
-        // Might want to integrate this with AngularJS returnCart.
-    });
-});
-
-var app = angular.module("storefrontApp", []);
-app.controller("BillingReturnController", function($scope, $http){
-    $scope.returnCart = [];
-    $scope.refundDetails = {};
-    $scope.shopperId = "";
-    $scope.reason = "";
-    $scope.submitReturn = function() {
-        const returnData = {
-            shopperId: $scope.shopperId,
-            refundId: "R12345",
-            refundAmount: 25.00,
-            refundDate: new Date().toISOString(),
-            reasonForRefund: $scope.reason,
-            refundItems: $scope.returnCart,
-            refundLocation: {
-                type: "creditCard",
-                creditCardLastFour: "1234"
-            }
-        };
-        $http.post("/api/processReturn", returnData)
-        .then(function(response){
-            $scope.refundDetails = response.data;
-            alert("Return processed successfully!");
-        }, function(error){
-            alert("Error processing return: " + error.statusText);
-        });
+    // Build the billing JSON doc
+    const payload = {
+      shopperId: $scope.form.shopperId,
+      reason: $scope.form.reason,
+      refundMethod: $scope.form.refundMethod,
+      returnType: $scope.form.returnType,
+      billing: {
+        last4: $scope.form.cardNumber ? $scope.form.cardNumber.replace(/\D/g, '').slice(-4) : null,
+        expiry: $scope.form.expiry || null
+      },
+      submittedAt: new Date().toISOString()
     };
-});
+
+    // Send to backend
+    $scope.ui.loading = true;
+    $http.post('/api/billing', payload)
+      .then(function(res) {
+        $scope.refundDetails = {
+          status: 'ok',
+          confirmationID: res.data.confirmationID || ('BILL-' + Math.random().toString(36).substr(2,6).toUpperCase())
+        };
+      })
+      .catch(function(err) {
+        console.error(err);
+        $scope.ui.error = 'Error submitting billing details.';
+      })
+      .finally(function() {
+        $scope.ui.loading = false;
+      });
+  };
+}]);

@@ -1,0 +1,16 @@
+[
+  {
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "phone": "+1-215-555-9876",
+    "age": 34,
+    "address": "742 Evergreen Terrace, Nowhere, State 11111"
+  },
+  {
+    "email": "jordan.lee@example.com",
+    "name": "Jordan Lee",
+    "phone": "1-123-456-7890",
+    "age": 27,
+    "address": "123 Market Street, Everywhere, State 99999"
+  }
+]

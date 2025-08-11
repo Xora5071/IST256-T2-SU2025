@@ -1,0 +1,20 @@
+{
+  "shopper": {
+    "name": "John Doe",
+    "email": "john.doe@example.com"
+  },
+  "cart": [
+    { "sku": "GB-001", "title": "Game Boy Color", "price": 79.99, "qty": 1 },
+    { "sku": "GB-002", "title": "Tetris", "price": 14.99, "qty": 1 }
+  ],
+  "shipping": {
+    "street1": "789 Evergreen Terrace",
+    "street2": "Apt",
+    "city": "Nowhere",
+    "state": "PA",
+    "zip": "11111",
+    "carrier": "UPS",
+    "method": "Expedited"
+  }
+}
+

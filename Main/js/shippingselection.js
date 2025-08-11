@@ -13,23 +13,28 @@ angular.module('storefrontApp', [])
         method: ''
     };
 
-    // Handles form submission, validates input, and saves data
+    // Handle form submission
     $scope.submitShipping = function() {
-        if ($scope.shippingForm && $scope.shippingForm.$valid) {
+        if ($scope.shippingForm.$valid) {
 
-            // Store the details for the cart page to use later
-            localStorage.setItem(
-                'shippingDetails',
-                JSON.stringify($scope.shippingDetails)
-            );
+            // Save to localStorage so shoppingcart.js can pick it up
+            localStorage.setItem('shippingDetails', JSON.stringify($scope.shippingDetails));
 
-            console.log('Shipping details submitted:', $scope.shippingDetails);
-            alert('Shipping information confirmed!');
+            // Optionally POST to your REST API right now
+            $http.post('/api/shipping', $scope.shippingDetails)
+                .then(function(response) {
+                    console.log('Shipping info saved to server:', response.data);
 
-            // Redirect to cart page or next checkout step
-            window.location.href = 'shoppingcart.html';
+                    // Redirect to cart after successful POST
+                    window.location.href = 'shoppingcart.html';
+                })
+                .catch(function(error) {
+                    console.error('Error saving shipping info:', error);
+                    alert('There was an issue saving your shipping info.');
+                });
+
         } else {
-            alert('Please fill out all required fields correctly.');
+            alert('Please complete all required fields before continuing.');
         }
     };
-});
+}]);

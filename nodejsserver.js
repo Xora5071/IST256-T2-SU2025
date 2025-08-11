@@ -1,94 +1,117 @@
+// nodejsserver.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient } = require('mongodb');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'Main'))); // Serves HTML/CSS/JS from /Main
+app.use(express.static(path.join(__dirname, 'Main')));
 
-// MongoDB setup
-const mongoURL = "mongodb://localhost:27017/";
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const dbName = process.env.DB_NAME || 'storefront';
+
 let db;
 
-MongoClient.connect(mongoURL, { useUnifiedTopology: true })
-  .then(client => {
-    db = client.db("Db");
-    console.log("Connected to MongoDB");
+async function start() {
+  const client = new MongoClient(uri);
+  await client.connect();
+  db = client.db(dbName);
+  console.log(`Connected to MongoDB: ${uri}/${dbName}`);
 
-    // Insert sample document (optional)
-    const customersCollection = db.collection("pract");
-    const customer = { _id: 1, name: "John Doe", address: "123, City, State", orderdata: "Gameboy" };
-    customersCollection.insertOne(customer).then(() => {
-      console.log("1 document inserted");
-    });
-  })
-  .catch(err => console.error("MongoDB connection error:", err));
+  // Example: existing route (adjust as needed)
+  app.get('/api/health', (req, res) => res.json({ ok: true }));
 
-/* ---------------------------
-   API ROUTES
-----------------------------*/
+  // Shoppers (REST)
+  app.post('/api/shoppers', async (req, res) => {
+    try {
+      const r = await db.collection('shoppers').insertOne(req.body);
+      res.status(201).json({ insertedId: r.insertedId });
+    } catch (e) {
+      if (e.code === 11000) return res.status(409).json({ message: 'Email already exists' });
+      console.error(e);
+      res.status(500).json({ message: 'Failed to add shopper' });
+    }
+  });
 
-// Example existing route
-app.get('/api/customers', async (req, res) => {
-  const customers = await db.collection("pract").find().toArray();
-  res.json(customers);
-});
+  app.get('/api/shoppers/:email', async (req, res) => {
+    const shopper = await db.collection('shoppers').findOne({ email: req.params.email });
+    if (!shopper) return res.status(404).json({ message: 'Not found' });
+    res.json(shopper);
+  });
 
-// Shopper info
-app.post('/api/shopper', async (req, res) => {
-  const result = await db.collection("shoppers").insertOne(req.body);
-  res.json({ success: true, id: result.insertedId });
-});
+  app.put('/api/shoppers/:email', async (req, res) => {
+    const r = await db.collection('shoppers').updateOne(
+      { email: req.params.email },
+      { $set: req.body }
+    );
+    res.json({ matchedCount: r.matchedCount, modifiedCount: r.modifiedCount });
+  });
 
-// Product list
-app.get('/api/products', async (req, res) => {
-  const products = await db.collection("products").find().toArray();
-  res.json(products);
-});
+  // Products
+  app.get('/api/products', async (req, res) => {
+    const q = (req.query.query || '').trim();
+    const filter = q
+      ? { $or: [{ name: { $regex: q, $options: 'i' } }, { sku: { $regex: q, $options: 'i' } }] }
+      : {};
+    const products = await db.collection('products').find(filter).toArray();
+    res.json(products);
+  });
 
-// Shopping cart
-app.post('/api/cart', async (req, res) => {
-  const result = await db.collection("carts").updateOne(
-    { shopperId: req.body.shopperId },
-    { $set: { items: req.body.items } },
-    { upsert: true }
-  );
-  res.json({ success: true });
-});
+  // Cart
+  app.post('/api/cart', async (req, res) => {
+    const { shopperId, items } = req.body;
+    if (!shopperId || !Array.isArray(items)) return res.status(400).json({ message: 'Invalid cart payload' });
+    await db.collection('carts').updateOne(
+      { shopperId },
+      { $set: { items, updatedAt: new Date() } },
+      { upsert: true }
+    );
+    res.json({ success: true });
+  });
 
-app.get('/api/cart', async (req, res) => {
-  const cart = await db.collection("carts").findOne({ shopperId: req.query.shopperId });
-  res.json(cart || { items: [] });
-});
+  app.get('/api/cart', async (req, res) => {
+    const { shopperId } = req.query;
+    if (!shopperId) return res.status(400).json({ message: 'shopperId required' });
+    const cart = await db.collection('carts').findOne({ shopperId });
+    res.json(cart || { shopperId, items: [] });
+  });
 
-// Shipping selection
-app.post('/api/shipping', async (req, res) => {
-  // Simple static rate calc for demo
-  const shippingCost = req.body.method === "express" ? 15 : 5;
-  res.json({ shippingCost, eta: "3-5 days" });
-});
+  // Shipping quote (simple demo)
+  app.post('/api/shipping', async (req, res) => {
+    const { method } = req.body;
+    const shippingCost = method === 'express' ? 15 : 5;
+    res.json({ method, shippingCost, eta: method === 'express' ? '1-2 days' : '3-5 days' });
+  });
 
-// Billing
-app.post('/api/billing', async (req, res) => {
-  const result = await db.collection("orders").insertOne(req.body);
-  res.json({ success: true, orderId: result.insertedId });
-});
+  // Billing → create order
+  app.post('/api/billing', async (req, res) => {
+    const order = {
+      ...req.body,
+      status: 'placed',
+      createdAt: new Date()
+    };
+    const r = await db.collection('orders').insertOne(order);
+    res.json({ success: true, orderId: r.insertedId });
+  });
 
-// Returns
-app.post('/api/returns', async (req, res) => {
-  const result = await db.collection("returns").insertOne(req.body);
-  res.json({ success: true, returnId: result.insertedId });
-});
+  // Returns
+  app.post('/api/returns', async (req, res) => {
+    const ret = { ...req.body, status: 'requested', createdAt: new Date() };
+    const r = await db.collection('returns').insertOne(ret);
+    res.json({ success: true, returnId: r.insertedId });
+  });
 
-/* ---------------------------
-   START SERVER
-----------------------------*/
-app.listen(PORT, () => {
-  console.log(`Express server running at http://localhost:${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Express server running at http://localhost:${PORT}`);
+  });
+}
+
+start().catch(err => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
 });

@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "init:db": "node scripts/init-db.js",
+    "start": "node nodejsserver.js"
+  }
+}

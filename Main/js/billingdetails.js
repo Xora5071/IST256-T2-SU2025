@@ -2,7 +2,7 @@ $(document).ready(function(){
     let returnProducts = [];
 
     // Fetches product data from a JSON file.
-    $.getJSON("data/ReturnsProducts.json", function(data) {
+    $.getJSON("Main/ReturnsProducts.json", function(data) {
         returnProducts = data;
         displayProducts(returnProducts);
     }).fail(function(jqxhr, textStatus, error) {

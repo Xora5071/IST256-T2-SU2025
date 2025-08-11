@@ -1,0 +1,35 @@
+{
+  "productId": "string",
+  "productName": "string",
+  "originalPrice": 0.00,
+  "originalQuantity": 0,
+  "quantityToReturn": 0,
+  "reasonForReturn": "string",
+  "returnItemStatus": "pending",
+  "refundId": "string",
+  "originalOrderId": "string",
+  "refundAmount": 0.00,
+  "refundDate": "YYYY-MM-DD",
+  "refundStatus": "pending",
+  "reasonForRefund": "string",
+  "refundItems": [
+    {
+      "productId": "string",
+      "quantityRefunded": 0,
+      "refundAmountPerItem": 0.00
+    }
+  ],
+  "refundLocation": {
+    "type": "string",
+    "creditCardLastFour": null,
+    "paypalTransactionId": null,
+    "bankAccountNumberLastFour": null,
+    "bankRoutingNumber": null,
+    "storeCreditId": null,
+    "giftCardCode": null,
+    "mobileWalletTransactionId": null,
+    "cryptoTransactionHash": null,
+    "checkNumber": null,
+    "loyaltyAccountId": null
+  }
+}

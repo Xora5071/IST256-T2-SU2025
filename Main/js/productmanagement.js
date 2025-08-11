@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Product Data:", productData);
 
         // --- API Fetch Section ---
-        // This sends the collected data to your backend API.
-        fetch('your-api-endpoint', { // NEED TO REPLACE 'your-api-endpoint' with actual API URL
+        fetch('/api/products', {
             method: 'POST',
             body: JSON.stringify(productData),
             headers: {

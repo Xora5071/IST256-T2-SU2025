@@ -12,8 +12,8 @@ async function connectDB() {
   client = new MongoClient(URI);
   await client.connect();
   db = client.db(DB_NAME);
-  console.log('Connected to MongoDB: ${DB_NAME}');
-  return db;
+  console.log(`Connected to MongoDB: ${DB_NAME}`);
+  //return db;
 
   // Helpful index: ensure productId is unique
   try {
